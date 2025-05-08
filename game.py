@@ -20,3 +20,18 @@ def create_cave():
     node = node.below
     node.right.right = Room(False, False, True)
     return node
+
+def print_current_room_info(room):
+    if room.right and room.left:
+        print("You see two chambers ahead...")
+    elif room.right and not room.left or room.left and not room.right:
+        print("You see one chamber ahead...")
+    else:
+        print("Dead end...")
+
+    if room.right.bats or room.left.bats:
+        print("You smell bats...")
+    if room.right.wumpus or room.left.wumpus:
+        print("You hear a wumpus...")
+    if room.right.pit or room.left.pit:
+        print("You feel a draft...")
