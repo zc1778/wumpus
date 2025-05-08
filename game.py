@@ -35,3 +35,21 @@ def print_current_room_info(room):
         print("You hear a wumpus...")
     if room.right.pit or room.left.pit:
         print("You feel a draft...")
+
+def room_check(room):
+    if room.bats:
+        #set room to another room
+        pass
+    if room.pit:
+        print("You fell into a bottomless pit...")
+        #some lose condition change
+    if room.wumpus:
+        print("The wumpus ate you....")
+
+def fire_check(room, direction):
+    if direction == "right" and room.right.wumpus:
+        print("You got the wumpus!")
+    if direction == "left" and room.left.wumpus:
+        print("You got the wumpus!")
+    else:
+        print("It seems you have missed...")
