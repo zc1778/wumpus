@@ -24,19 +24,22 @@ def create_cave():
 def print_current_room_info(room):
     if room.right and room.left:
         print("You see two chambers ahead...")
+        return 2
     elif room.right and not room.left or room.left and not room.right:
         print("You see one chamber ahead...")
+        return 1
     else:
         print("Dead end...")
+        return 0
 
-    if room.right:
+    if room.right: #confirming there is a right room
         if room.right.bats:
             print("You smell bats...")
         if room.right.wumpus:
             print("You hear a wumpus...")
         if room.right.pit:
             print("You feel a draft...")
-    if room.left:
+    if room.left: #confirming there is a left room
         if room.left.bats:
             print("You smell bats...")
         if room.left.wumpus:
@@ -58,10 +61,13 @@ def room_check(room):
 def fire_check(room, direction):
     if direction == "right" and room.right.wumpus:
         print("You got the wumpus!")
+        return 1
     if direction == "left" and room.left.wumpus:
         print("You got the wumpus!")
+        return 1
     else:
         print("It seems you have missed...")
+        return 0
 
 def hunter_move_check(room, user_input):
     if user_input == "right":
@@ -81,7 +87,7 @@ def game_loop():
     hunting = True
     while hunting:
         print_current_room_info(room)
-        print("To move- type 'right' or 'left'\nTo fire, type fire")
+        print("To move, type 'right' or 'left'\nTo fire, type fire")
         choice = input(">")
         if choice == "right" or choice == "left":
             room = hunter_move_check(room, choice)
@@ -90,7 +96,9 @@ def game_loop():
         if choice == "fire":
             print("Right or Left? ")
             choice = input(">")
-            fire_check(room, choice)
+            if fire_check(room, choice) == 1:
+                hunting = False
         print("\n")
 
-game_loop()
+if __name__ == '__main__':
+    game_loop()
