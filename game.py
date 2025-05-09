@@ -29,12 +29,20 @@ def print_current_room_info(room):
     else:
         print("Dead end...")
 
-    if room.right.bats or room.left.bats:
-        print("You smell bats...")
-    if room.right.wumpus or room.left.wumpus:
-        print("You hear a wumpus...")
-    if room.right.pit or room.left.pit:
-        print("You feel a draft...")
+    if room.right:
+        if room.right.bats:
+            print("You smell bats...")
+        if room.right.wumpus:
+            print("You hear a wumpus...")
+        if room.right.pit:
+            print("You feel a draft...")
+    if room.left:
+        if room.left.bats:
+            print("You smell bats...")
+        if room.left.wumpus:
+            print("You hear a wumpus...")
+        if room.left.pit:
+            print("You feel a draft...")
 
 def room_check(room):
     if room.bats:
@@ -42,9 +50,10 @@ def room_check(room):
         pass
     if room.pit:
         print("You fell into a bottomless pit...")
-        #some lose condition change
+        return 0
     if room.wumpus:
         print("The wumpus ate you....")
+        return 0
 
 def fire_check(room, direction):
     if direction == "right" and room.right.wumpus:
@@ -53,3 +62,35 @@ def fire_check(room, direction):
         print("You got the wumpus!")
     else:
         print("It seems you have missed...")
+
+def hunter_move_check(room, user_input):
+    if user_input == "right":
+        if not room.right:
+            print("There is no right chamber!")
+        else:
+            return room.right
+    elif user_input == "left":
+        if not room.left:
+            print("There is no left chamber!")
+        else:
+            return room.left
+
+
+def game_loop():
+    room = create_cave()
+    hunting = True
+    while hunting:
+        print_current_room_info(room)
+        print("To move- type 'right' or 'left'\nTo fire, type fire")
+        choice = input(">")
+        if choice == "right" or choice == "left":
+            room = hunter_move_check(room, choice)
+            if room_check(room) == 0:
+                hunting = False
+        if choice == "fire":
+            print("Right or Left? ")
+            choice = input(">")
+            fire_check(room, choice)
+        print("\n")
+
+game_loop()
