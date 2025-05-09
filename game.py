@@ -1,24 +1,29 @@
+import random
+
 class Room:
-    def __init__(self, bats, wumpus, pit):
+    def __init__(self, bats, wumpus, pit, node_id):
         self.bats = bats
         self.wumpus = wumpus
         self.pit = pit
         self.left = None
         self.right = None
         self.below = None
+        self.node_id = node_id
 
 # create pre-defined cave and return entrance room/node
 def create_cave():
-    node = Room(False, False, False)
-    node.right = Room(False, False, False)
-    node.left = Room(False, False, False)
+    node = Room(False, False, False, 1)
+    node.right = Room(False, False, False, 2)
+    node.left = Room(False, False, False, 3)
     node.right.below = node
     node.left.below = node
     node = node.left
-    node.right = Room(False, True, False)
-    node.left = Room(True, False, False)
+    node.right = Room(False, True, False, 4)
+    node.left = Room(True, False, False, 5)
+    node.right.below = node
+    node.left.below = node
     node = node.below
-    node.right.right = Room(False, False, True)
+    node.right.right = Room(False, False, True, 6)
     return node
 
 def print_current_room_info(room):
@@ -47,10 +52,37 @@ def print_current_room_info(room):
         if room.left.pit:
             print("You feel a draft...")
 
-def room_check(room):
+def bat_check(room):
+    def traverse(random_node, visited, stack):
+        while stack:
+            current = stack.pop()
+            if current in visited or not current:
+                continue
+
+            visited.append(current)
+            if current.node_id == random_node:
+                return current
+
+            stack.append(current.right)
+            stack.append(current.left)
+
     if room.bats:
-        #set room to another room
-        pass
+        root = room.below.below
+        stack = []
+        visited = []
+        stack.append(root)
+        return traverse(random.randint(0, 7), visited, stack)
+    return room
+
+
+    if room.bats:
+        root = room.below.below
+        stack = []
+        visited = []
+        stack.append(root)
+    return room
+
+def room_check(room):
     if room.pit:
         print("You fell into a bottomless pit...")
         return 0
@@ -91,6 +123,7 @@ def game_loop():
         choice = input(">")
         if choice == "right" or choice == "left":
             room = hunter_move_check(room, choice)
+            room = bat_check(room)
             if room_check(room) == 0:
                 hunting = False
         if choice == "fire":
